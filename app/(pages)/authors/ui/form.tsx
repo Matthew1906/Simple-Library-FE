@@ -37,7 +37,7 @@ const AuthorForm = (
                     closeDialog?.();
                     toast.success("Successfully updated author name")
                 } else {
-                    toast.warning("Unexpected error occurred!")
+                    toast.warning(res.message)
                     form.reset();         
                 }
             })
@@ -47,7 +47,7 @@ const AuthorForm = (
                     closeDialog?.();
                     toast.success("Successfully added a new author")
                 } else {
-                    toast.warning("Unexpected error occurred!")
+                    toast.warning(res.message)
                     form.reset();         
                 }
             })
@@ -69,10 +69,12 @@ const AuthorForm = (
                     </FormItem>
                 )}
             />
-            <div className="flex justify-end gap-2 my-4 px-2 sm:px-0">
-                <Button type="button" variant="destructive" onClick={closeDialog}>Cancel</Button>
-                { canUpdate && <Button>Save</Button> }
-            </div>
+            { canUpdate &&
+                <div className="flex justify-end gap-2 my-4 px-2 sm:px-0">
+                    <Button type="button" variant="destructive" onClick={closeDialog}>Cancel</Button>
+                    <Button>Save</Button>
+                </div>
+            }
         </form>
     </Form>
                         

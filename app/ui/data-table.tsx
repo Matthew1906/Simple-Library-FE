@@ -12,7 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { ColumnDef, flexRender, getCoreRowModel, RowSelectionState, SortingState, useReactTable, VisibilityState } from "@tanstack/react-table";
 import { PaginationBar, TableFilterInput, SortHeader } from "./data";
 
-interface DataTableProps<TData, TValue> {
+export interface DataTableProps<TData, TValue> {
   /** Column definitions */
   readonly columns: ColumnDef<TData, TValue>[];
   /** Data displayed in the table */
@@ -163,11 +163,10 @@ export default function DataTable<TData, TValue>(
         </>
       )}
     </div>
-    {(filters || isVisibleControls || isSelectionControls) && (
+    {(filters || isVisibleControls) && (
       <div className="flex w-full items-end justify-between">
         {/* Filter input */}
-        {filters && (
-          <>
+        {filters && 
             <div className="inline-flex flex-wrap gap-2 items-end">
               {(filters ?? []).map((filter) => {
                 const colFilter = columnFilters.find(val=>val.key === filter.key);
@@ -182,33 +181,32 @@ export default function DataTable<TData, TValue>(
               <Button onClick={submitFilter} type="button" className="cursor-pointer" variant={"outline"}>Filter</Button>
               <Button onClick={resetFilter} type="button" className="cursor-pointer" variant={"outline"}>Reset</Button>
             </div>
+        }
 
-            {isVisibleControls && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline">
-                    <EyeIcon className="w-4 h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {table
-                    .getAllColumns()
-                    .filter((column) => column.getCanHide())
-                    .map((column) => (
-                      <DropdownMenuCheckboxItem
-                        key={column.id}
-                        className="capitalize"
-                        checked={column.getIsVisible()}
-                        onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                      >
-                        {column.columnDef.header?.toString()}
-                      </DropdownMenuCheckboxItem>
-                    ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-          </>
-        )}
+        {isVisibleControls && 
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                <EyeIcon className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                  >
+                    {column.columnDef.header?.toString()}
+                  </DropdownMenuCheckboxItem>
+                ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        }
       </div>
     )}
     <div className="flex">

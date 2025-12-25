@@ -14,8 +14,8 @@ import { RequiredAsterisk } from "@/app/ui";
 const schema = z.object({
     code: z.string().min(5).max(5),
     name: z.string().min(3).max(100),
-    email: z.email().nullish(),
-    phone_no: z.string().nullish()
+    email: z.string().nullish().transform(val => val === "" ? null : val).pipe(z.email().nullish()),
+    phone_no: z.string().nullish().transform(val => val === "" ? null : val).pipe(z.string().nullish()),
 })
 
 const MemberForm = (
@@ -46,7 +46,7 @@ const MemberForm = (
                     closeDialog?.();
                     toast.success("Successfully updated member data")
                 } else {
-                    toast.warning("Unexpected error occurred!")
+                    toast.warning(res.message)
                     form.reset();         
                 }
             })
@@ -56,7 +56,7 @@ const MemberForm = (
                     closeDialog?.();
                     toast.success("Successfully added a new member data")
                 } else {
-                    toast.warning("Unexpected error occurred!")
+                    toast.warning(res.message)
                     form.reset();         
                 }
             })
@@ -98,7 +98,7 @@ const MemberForm = (
                     <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                            <Input placeholder="Insert member email" {...field} value={field.value??undefined} type="email" disabled={!canUpdate} />
+                            <Input placeholder="Insert member email" {...field} value={field.value??""} type="email" disabled={!canUpdate} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -111,16 +111,18 @@ const MemberForm = (
                     <FormItem>
                         <FormLabel>Phone No</FormLabel>
                         <FormControl>
-                            <Input placeholder="Insert member phone number" {...field} value={field.value??undefined} type="tel" disabled={!canUpdate} />
+                            <Input placeholder="Insert member phone number" {...field} value={field.value??""} type="tel" disabled={!canUpdate} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
                 )}
             />
-            <div className="flex justify-end gap-2 my-4 px-2 sm:px-0">
-                <Button type="button" variant="destructive" onClick={closeDialog}>Cancel</Button>
-                { canUpdate && <Button>Save</Button> }
-            </div>
+            { canUpdate &&
+                <div className="flex justify-end gap-2 my-4 px-2 sm:px-0">
+                    <Button type="button" variant="destructive" onClick={closeDialog}>Cancel</Button>
+                    <Button>Save</Button>
+                </div>
+            }
         </form>
     </Form>
                         

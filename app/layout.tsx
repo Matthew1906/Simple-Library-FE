@@ -17,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return <html lang="en">
-    <body className={`${poppins.variable} antialiased`}>
+    <body className={`${poppins.variable} antialiased`} >
       <SidebarProvider>
         <Sidebar />
         <main className="p-5 w-full">

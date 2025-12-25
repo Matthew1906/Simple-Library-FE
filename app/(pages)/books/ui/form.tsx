@@ -1,7 +1,7 @@
 'use client'
 
 import z from "zod";
-import { Book } from "@/lib/interface"
+import { Author, Book } from "@/lib/interface"
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createBook, updateBook } from "@/app/services/book";
@@ -21,8 +21,8 @@ const schema = z.object({
 })
 
 const BookForm = (
-    { id, data, closeDialog, canUpdate } : 
-    { id?:string, data?: Book|null, closeDialog?:()=>void, canUpdate?:boolean } 
+    { id, data, authors, closeDialog, canUpdate } : 
+    { id?:string, data?: Book|null, authors: Author[], closeDialog?:()=>void, canUpdate?:boolean } 
 ) =>{
 
     const form = useForm<z.infer<typeof schema>>({
@@ -135,7 +135,7 @@ const BookForm = (
                                 value={field.value}
                                 placeholder="Select author"
                                 disabled={!canUpdate}
-                                options={[]}
+                                options={authors.map(val=>({ key: val.id, value: val.name }))}
                             />
                         </FormControl>
                         <FormMessage />
@@ -167,10 +167,12 @@ const BookForm = (
                     </FormItem>
                 )}
             />
-            <div className="flex justify-end gap-2 my-4 px-2 sm:px-0">
-                <Button type="button" variant="destructive" onClick={closeDialog}>Cancel</Button>
-                { canUpdate && <Button>Save</Button> }
-            </div>
+            { canUpdate &&
+                <div className="flex justify-end gap-2 my-4 px-2 sm:px-0">
+                    <Button type="button" variant="destructive" onClick={closeDialog}>Cancel</Button>
+                    <Button>Save</Button>
+                </div>
+            }
         </form>
     </Form>
                         

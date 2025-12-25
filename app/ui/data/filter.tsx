@@ -17,7 +17,7 @@ const TableFilterInput = (
 
     const [searchValue, setSearchValue] = useState<string>(filter.type === 'search' ? filter?.value as string ?? "" : "");
     
-    const [stringValue, setStringValue] = useState<string>(filter.type === 'string' ? filter?.value as string ?? "" : "");
+    const [stringValue, setStringValue] = useState<string>((filter.type === 'string' || filter.type=='select') ? filter?.value as string ?? "" : "");
     
     const [numValue, setNumValue] = useState<number>(filter.type === 'number' ? Number((Array.isArray(filter?.value) ? filter.value[0] : filter.value)??0) ?? 0  : 0);
     
@@ -29,13 +29,13 @@ const TableFilterInput = (
             
     const [boolValue, setBoolValue] = useState<boolean>(filter.type === 'checkbox' ? filter.value as boolean??false:false);
     
-    const commitValue = useCallback(() => {
+    const commitValue = useCallback((override?:string) => {
         let val = undefined;
         switch (filter.type) {
             case "search":
                 val = searchValue;
                 break;
-            case "string":
+            case "string" :
                 val = stringValue;
                 break;
             case "number":
@@ -63,8 +63,8 @@ const TableFilterInput = (
                 val = boolValue;
                 break;
             case "select":
-                if (stringValue?.includes("All")) val = undefined;
-                else val = stringValue;
+                if (override?.includes("All")) val = undefined;
+                else val = override;
                 break;
         }
         onChange({ ...filter, value: val });
@@ -76,13 +76,13 @@ const TableFilterInput = (
             <Input
                 value={stringValue}
                 onChange={(event) => setStringValue(event.target.value)}
-                onBlur={commitValue}
+                onBlur={()=>commitValue}
                 placeholder={stringValue ? stringValue : `Filter by ${filter.label}`}
             />
         ) : filter.type === "number" ? (
             <Input
                 value={numValue}
-                onBlur={commitValue}
+                onBlur={()=>commitValue}
                 onChange={(event) => setNumValue(Number.parseInt(event.target.value))}
                 placeholder={numValue?.toString() ? numValue?.toString() : `Filter by ${filter.label}`}
                 type="number"
@@ -93,7 +93,7 @@ const TableFilterInput = (
                     className="w-24 "
                     value={numValue}
                     onChange={(event) => setNumValue(Number.parseInt(event.target.value))}
-                     onBlur={commitValue}
+                    onBlur={()=>commitValue}
                     type="number"
                     placeholder="Number"
                 />
@@ -102,7 +102,7 @@ const TableFilterInput = (
                     className="w-24 "
                     value={maxNumValue}
                     onChange={(event) => setMaxNumValue(Number.parseInt(event.target.value))}
-                     onBlur={commitValue}
+                    onBlur={()=>commitValue}
                     type="number"
                     placeholder="Number"
                 />
@@ -137,7 +137,7 @@ const TableFilterInput = (
             <Select 
                 onValueChange={(val)=>{
                     setStringValue(val)
-                    commitValue()
+                    commitValue(val)
                 }} 
                 value={stringValue}
             >
@@ -162,7 +162,7 @@ const TableFilterInput = (
         ) : filter.type === "search" ? (
             <Input
                 value={searchValue} 
-                onBlur={commitValue}
+                onBlur={()=>commitValue}
                 onChange={(event) => setSearchValue(event.target.value)}
                 placeholder={searchValue ? searchValue : `Search ${filter.label}`}
             />

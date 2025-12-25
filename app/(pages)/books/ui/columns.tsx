@@ -3,12 +3,14 @@
 import BookForm from "./form"
 import { PopupContainer, ProceedAlert } from "@/app/ui"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Book } from "@/lib/interface"
+import { Author, Book } from "@/lib/interface"
 import { CellContext, ColumnDef } from "@tanstack/react-table"
 import { EllipsisVertical } from "lucide-react"
 import { deleteBook } from "@/app/services/book"
 import { Badge } from "@/components/ui/badge"
 import { capitalizeString } from "@/lib/string"
+
+interface BookCellContext<T> extends CellContext<T, unknown> { authors?: Author[]|null; }
 
 const columns: ColumnDef<Book>[] = [
     { 
@@ -18,7 +20,7 @@ const columns: ColumnDef<Book>[] = [
     },
     {
         accessorKey:"author.name",
-        id:"author-name",
+        id:"author_name",
         header:"Author",
         enableSorting:true
     },
@@ -34,12 +36,13 @@ const columns: ColumnDef<Book>[] = [
     },
     { 
         accessorKey:"publishing_year",
+        id:"publishingYear",
         header:"Year of Publishing",
         enableSorting:true
     },
     { 
         header:"Actions",
-        cell:({ row }: CellContext<Book, unknown>)=>{
+        cell:({ row, authors }: BookCellContext<Book>)=>{
             return <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <EllipsisVertical className="w-4 h-4 cursor-pointer" />
@@ -52,7 +55,11 @@ const columns: ColumnDef<Book>[] = [
                                 modalTitle="View book data"
                                 modalDescription="View book details"
                             >
-                                <BookForm id={row.original.id} data={row.original} />
+                                <BookForm 
+                                    id={row.original.id} 
+                                    authors={authors??[]}
+                                    data={{...row.original, author_id: row.original.author.id }}
+                                />
                             </PopupContainer>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
@@ -61,7 +68,10 @@ const columns: ColumnDef<Book>[] = [
                                 modalTitle="Edit book data"
                                 modalDescription="Edit book details"
                             >
-                                <BookForm canUpdate id={row.original.id} data={row.original} />
+                                <BookForm 
+                                    canUpdate id={row.original.id} authors={authors??[]}
+                                    data={{...row.original, author_id: row.original.author.id }}
+                                />
                             </PopupContainer>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>

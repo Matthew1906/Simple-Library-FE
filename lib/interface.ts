@@ -70,7 +70,7 @@ export interface BookMutation {
 export interface Book extends BookMutation {
     id:string,
     description: string | null;
-    author:{ name:string }
+    author:Author
     updated_at: Date
 }
 
@@ -107,7 +107,7 @@ export interface BookBorrowing extends BookBorrowingMutation {
     id:string
     book:{ name:string };
     member:{ name:string };
-    return_date: Date
+    return_date: Date | null
 }
 
 export interface BookBorrowingOverviewResponse extends OverviewResponse {
