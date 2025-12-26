@@ -133,7 +133,7 @@ export default function DataTable<TData, TValue>(
     state: { pagination, sorting, columnVisibility, rowSelection },
   });
   
-  return <div className="w-full flex flex-col gap-2">
+  return <div className="w-full flex flex-col gap-4 lg:gap-2 text-xs lg:text-base">
     <div className="w-full flex gap-2 justify-end">
       {/* Custom action */}
       {actionHandlers?.map((actionHandler) => {

@@ -14,7 +14,7 @@ export default function PaginationBar<TData>({ table, count, isClient }: DataTab
   return (
     <div className="flex flex-wrap items-center justify-between p-3 rounded-b-lg border-t border-[--border-color]">
       { !isClient && 
-        <div className="flex-1 text-sm text-muted-foreground">
+        <div className="flex-1 text-sm text-muted-foreground mb-5 md:mb-0">
           {`${table.getRowCount()} out of ${count} rows found`}
         </div>
       }

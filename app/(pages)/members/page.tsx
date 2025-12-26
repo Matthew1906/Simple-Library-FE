@@ -9,7 +9,7 @@ export default async function MemberOverview({ searchParams } : { searchParams?:
     const params = await searchParams;
     const members = await getMemberOverview(params, true)
     return <div className="space-y-4">
-        <p className="text-2xl font-semibold">Member Overview</p>
+        <p className="text-lg lg:text-2xl font-semibold">Member Overview</p>
         <MemberTable count={members.count} data={members.data??[]} />
     </div>
 }

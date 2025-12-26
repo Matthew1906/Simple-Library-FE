@@ -13,7 +13,7 @@ export default async function BookOverview({ searchParams } : { searchParams?: S
     const bookData = getBookOverview(params, true)
     const [ authors, books ] = await Promise.all([ authorData, bookData ]);
     return <div className="space-y-4">
-        <p className="text-2xl font-semibold">Book Overview</p>
+        <p className="text-lg lg:text-2xl font-semibold">Book Overview</p>
         <BookTable data={books.data??[]} count={books.count} authors={authors.data??[]} />
     </div>
 }
