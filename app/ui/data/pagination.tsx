@@ -6,15 +6,18 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 interface DataTablePaginationProps<TData> {
   readonly table: Table<TData>;
   readonly count: number;
+  readonly isClient?: boolean
 }
 
 /** Pagination bar component to move between pages */
-export default function PaginationBar<TData>({ table, count }: DataTablePaginationProps<TData>) {
+export default function PaginationBar<TData>({ table, count, isClient }: DataTablePaginationProps<TData>) {
   return (
     <div className="flex flex-wrap items-center justify-between p-3 rounded-b-lg border-t border-[--border-color]">
-      <div className="flex-1 text-sm text-muted-foreground">
-        {`${table.getRowCount()} out of ${count} rows found`}
-      </div>
+      { !isClient && 
+        <div className="flex-1 text-sm text-muted-foreground">
+          {`${table.getRowCount()} out of ${count} rows found`}
+        </div>
+      }
       <div className="flex flex-wrap items-center space-x-6 lg:space-x-8">
         <div className="flex flex-wrap items-center space-x-2">
           <p className="text-sm font-medium">Rows per page</p>

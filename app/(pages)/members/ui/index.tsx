@@ -3,10 +3,10 @@
 import dynamic from "next/dynamic";
 import columns from "./columns";
 import CreateMemberButton from "./actions";
-import { DataTableProps } from "@/app/ui/data-table";
+import { DataTableProps } from "@/app/ui/server-table";
 import { Member } from "@/lib/interface";
 
-const DataTable = dynamic<DataTableProps<Member, unknown>>(() => import("@/app/ui/data-table"), { ssr: false });
+const DataTable = dynamic<DataTableProps<Member, unknown>>(() => import("@/app/ui/server-table"), { ssr: false });
 
 const MemberTable = ({ data, count } : { data: Member[], count:number })=>{
     return <DataTable

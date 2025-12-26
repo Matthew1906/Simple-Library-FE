@@ -3,10 +3,10 @@
 import dynamic from "next/dynamic";
 import columns from "./columns";
 import CreateAuthorButton from "./actions";
-import { DataTableProps } from "@/app/ui/data-table";
+import { DataTableProps } from "@/app/ui/server-table";
 import { Author } from "@/lib/interface";
 
-const DataTable = dynamic<DataTableProps<Author, unknown>>(() => import("@/app/ui/data-table"), { ssr: false });
+const DataTable = dynamic<DataTableProps<Author, unknown>>(() => import("@/app/ui/server-table"), { ssr: false });
 
 const AuthorTable = ({ data, count } : { data: Author[], count:number })=>{
     return <DataTable

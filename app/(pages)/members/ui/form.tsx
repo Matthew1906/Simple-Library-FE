@@ -10,6 +10,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RequiredAsterisk } from "@/app/ui";
+import ClientDataTable from "@/app/ui/client-table";
+import columns from "./borrowing";
 
 const schema = z.object({
     code: z.string().min(5).max(5),
@@ -117,6 +119,12 @@ const MemberForm = (
                     </FormItem>
                 )}
             />
+            { data && !canUpdate && 
+                <div className="my-2 space-y-4">
+                    <p className="text-sm md:text-base font-semibold"> Member Borrowings</p>
+                    <ClientDataTable data={data.borrowings} columns={columns} />
+                </div>
+            }
             { canUpdate &&
                 <div className="flex justify-end gap-2 my-4 px-2 sm:px-0">
                     <Button type="button" variant="destructive" onClick={closeDialog}>Cancel</Button>

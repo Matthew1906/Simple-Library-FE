@@ -2,32 +2,46 @@
 
 import { CalendarIcon } from "lucide-react";
 import { eachMonthOfInterval, endOfYear, format, startOfYear } from "date-fns";
-import { id } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { forwardRef, useMemo, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { X } from "lucide-react";
 
 interface DateInputProps {
   date?: Date;
   setDate: (_date?: Date) => void;
   disabled?: boolean;
-  possibleFutureYears?:number;
-  isError?: boolean;
+  possibleFutureYears?: number;
+  className?: string;
 }
 
-const DateInput = forwardRef<HTMLButtonElement, DateInputProps>((
-  { date, setDate, disabled = false, possibleFutureYears, isError = false }, ref
-) => {
+/**
+ * Date input component
+ *
+ * @component
+ * @example
+ * // Usage example:
+ *  <DateInput date={startDateValue} setDate={setStartDateValue} />
+ *
+ * @param {Date} props.date - date that will be inputted
+ * @param {void} props.setDate - function to set the date
 
-  const [ month, setMonth ] = useState<number>(date ? date.getMonth() : new Date().getMonth())
-  const [ year, setYear ] = useState<number>(date ? date.getFullYear() : new Date().getFullYear())
+ * @returns {JSX.Element} The rendered DateInput component.
+ * */
+const DateInput = forwardRef<HTMLButtonElement, DateInputProps>((
+  { date, setDate, disabled = false, possibleFutureYears, className }, ref
+) => {
+  const currentYear = new Date().getFullYear();
+  const [open, setOpen] = useState<boolean>(false);
+  const [month, setMonth] = useState<number>(date ? date.getMonth() : new Date().getMonth())
+  const [year, setYear] = useState<number>(date ? date.getFullYear() : currentYear)
 
   const years = useMemo(() => {
-    const currentYear = new Date().getFullYear() + (possibleFutureYears??0)
-    return Array.from({ length: currentYear - 1900 + 1 }, (_, i) => currentYear - i)
+    const maxYear = new Date().getFullYear() + (possibleFutureYears??0);
+    return Array.from({ length: maxYear - 1900 + 1 }, (_, i) => maxYear - i)
   }, [ possibleFutureYears ])
 
   const months = useMemo(() => {
@@ -38,10 +52,10 @@ const DateInput = forwardRef<HTMLButtonElement, DateInputProps>((
       })
     }
     return []
-  }, [year])
+  }, [ year ])
 
   const handleYearChange = (selectedYear: string) => {
-    const newYear = Number.parseInt(selectedYear, 10)
+    const newYear = parseInt(selectedYear, 10)
     setYear(newYear)
     if (date) {
       const newDate = new Date(date)
@@ -51,7 +65,7 @@ const DateInput = forwardRef<HTMLButtonElement, DateInputProps>((
   }
 
   const handleMonthChange = (selectedMonth: string) => {
-    const newMonth = Number.parseInt(selectedMonth, 10)
+    const newMonth = parseInt(selectedMonth, 10)
     setMonth(newMonth)
     if (date) {
       const newDate = new Date(date)
@@ -62,21 +76,29 @@ const DateInput = forwardRef<HTMLButtonElement, DateInputProps>((
     }
   }
 
+  const handleClearDate = () => {
+    setDate(undefined);
+    setOpen(false);
+  }
+
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           ref={ref}
-          variant={"outline"}
+          variant="default"
           disabled={disabled}
           className={cn(
-            "w-full justify-start text-left font-normal",
-            !date && "text-muted-foreground",
-            isError? "border-red-500" : "border-gray-300"
+            "w-full justify-start text-left",
+            date ? "text-foreground" : "text-muted-foreground",
+            "border border-gray-300",
+            "bg-white hover:bg-gray-300",
+            className
           )}
+          onClick={() => setOpen(!open)}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP", { locale: id }) : <span>Pilih tanggal</span>}
+          {date ? format(date, "d MMM yyyy") : "Pick a date"}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
@@ -99,8 +121,8 @@ const DateInput = forwardRef<HTMLButtonElement, DateInputProps>((
             </SelectTrigger>
             <SelectContent>
               {months.map((m, index) => (
-                <SelectItem key={m.getMonth()} value={index.toString()}>
-                  {format(m, "MMMM", { locale: id })}
+                <SelectItem key={index} value={m.getMonth().toString()}>
+                  {format(m, "MMMM")}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -109,18 +131,38 @@ const DateInput = forwardRef<HTMLButtonElement, DateInputProps>((
         <Calendar
           mode="single"
           selected={date}
-          onSelect={setDate}
+          onSelect={(val) => {
+            if (!val) {
+              handleClearDate();
+              return;
+            }
+            setDate(val);
+            setOpen(false);
+          }}
           month={new Date(year, month)}
           onMonthChange={(newMonth) => {
-            setMonth(newMonth.getMonth())
-            setYear(newMonth.getFullYear())
+            setMonth(newMonth.getMonth());
+            setYear(newMonth.getFullYear());
           }}
         />
+
+        {date && (
+          <div className="p-2 border-t">
+            <Button
+              size="sm"
+              className="w-full"
+              onClick={handleClearDate}
+            >
+              <X className="mr-2 h-4 w-4" />
+              Clear Date
+            </Button>
+          </div>
+        )}
       </PopoverContent>
     </Popover>
   )
 });
 
-DateInput.displayName = 'DateInput';
+DateInput.displayName = "DateInput"
 
 export default DateInput;

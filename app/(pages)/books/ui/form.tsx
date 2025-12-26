@@ -49,7 +49,7 @@ const BookForm = (
                     closeDialog?.();
                     toast.success("Successfully updated book data")
                 } else {
-                    toast.warning("Unexpected error occurred!")
+                    toast.warning(res.message)
                     form.reset();         
                 }
             })
@@ -59,7 +59,7 @@ const BookForm = (
                     closeDialog?.();
                     toast.success("Successfully added a new book data")
                 } else {
-                    toast.warning("Unexpected error occurred!")
+                    toast.warning(res.message)
                     form.reset();         
                 }
             })

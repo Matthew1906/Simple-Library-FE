@@ -2,7 +2,7 @@
 
 import { Children, cloneElement, isValidElement, ReactElement, useCallback, useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 
 const PopupContainer = (
@@ -35,16 +35,16 @@ const PopupContainer = (
           {modifiedChildren}
         </DialogContent>
       </Dialog>
-    : <Drawer open={isOpen} onOpenChange={setIsOpen}>
+    : <Sheet open={isOpen} onOpenChange={setIsOpen}>
         {modifiedTrigger}
-        <DrawerContent>
-          <DrawerHeader>
-            <DrawerTitle>{modalTitle}</DrawerTitle>
-            <DrawerDescription>{modalDescription}</DrawerDescription>
-          </DrawerHeader>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>{modalTitle}</SheetTitle>
+            <SheetDescription>{modalDescription}</SheetDescription>
+          </SheetHeader>
           <div className="py-2 px-5">{modifiedChildren}</div>
-        </DrawerContent>
-      </Drawer>
+        </SheetContent>
+      </Sheet>
 }
 
 export default PopupContainer;

@@ -7,7 +7,7 @@ import { revalidateTag } from "next/cache";
 export const getBookOverview = async(searchParams?: SearchParams, auto=false):Promise<BookOverviewResponse>=>{
     try {
         const params = getQueryParameters(searchParams, auto);
-        const res = await fetch(`${process.env.BACKEND_URL}/books?${params.toString()}`, { next:{ tags:['books']}});
+        const res = await fetch(`${process.env.BACKEND_URL}/books?${params.toString()}`, { next:{ tags:['books', 'authors']}});
         const data =  await res.json();
         return data;
     } catch(error){

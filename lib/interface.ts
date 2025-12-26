@@ -88,7 +88,8 @@ export interface MemberMutation {
 }
 
 export interface Member extends MemberMutation {
-    id:string
+    id:string,
+    borrowings: BookBorrowing[]
 }
 
 export interface MemberOverviewResponse extends OverviewResponse {
@@ -96,17 +97,22 @@ export interface MemberOverviewResponse extends OverviewResponse {
 }
 
 // Book Borrowing
+
 export interface BookBorrowingMutation {
-    book_id:string,
+    books:string[],
     member_id:string,
     borrow_date: Date,
     due_date: Date
 }
 
-export interface BookBorrowing extends BookBorrowingMutation {
+export interface BookBorrowing {
     id:string
-    book:{ name:string };
+    book_id: string
+    book:{ title:string };
+    member_id: string
     member:{ name:string };
+    borrow_date: Date
+    due_date: Date
     return_date: Date | null
 }
 
@@ -116,4 +122,5 @@ export interface BookBorrowingOverviewResponse extends OverviewResponse {
 
 export interface BookReturnMutation {
     return_date: Date
+    borrowings: string[]
 }

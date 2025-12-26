@@ -29,7 +29,7 @@ const TableFilterInput = (
             
     const [boolValue, setBoolValue] = useState<boolean>(filter.type === 'checkbox' ? filter.value as boolean??false:false);
     
-    const commitValue = useCallback((override?:string) => {
+    const commitValue = useCallback(() => {
         let val = undefined;
         switch (filter.type) {
             case "search":
@@ -46,29 +46,9 @@ const TableFilterInput = (
                     val = [numValue, maxNumValue];
                 }
                 break;
-            case "date":
-                if (startDateValue) {
-                    const startDate = endOfDay(new Date(startDateValue))
-                    val = startDate.getTime().toString();
-                }
-                break;
-            case "daterange":
-                if (startDateValue && endDateValue) {
-                    const startDate = new Date(startDateValue);
-                    const endDate = new Date(endDateValue);
-                    val = [ endOfDay(startDate).getTime().toString(), endOfDay(endDate).getTime().toString()];
-                }
-                break;
-            case "checkbox":
-                val = boolValue;
-                break;
-            case "select":
-                if (override?.includes("All")) val = undefined;
-                else val = override;
-                break;
         }
         onChange({ ...filter, value: val });
-    }, [ searchValue, stringValue, numValue, maxNumValue, startDateValue, endDateValue, boolValue, onChange, filter ]);
+    }, [ searchValue, stringValue, numValue, maxNumValue, onChange, filter ]);
     
     return <div className="flex flex-col justify-start gap-2 text-sm">
         <Label className="grow text-sm">{(filter.type === 'search' ? "Search " : "Filter by ") + capitalizeString(filter.label)}</Label>
@@ -76,13 +56,13 @@ const TableFilterInput = (
             <Input
                 value={stringValue}
                 onChange={(event) => setStringValue(event.target.value)}
-                onBlur={()=>commitValue}
+                onBlur={()=>commitValue()}
                 placeholder={stringValue ? stringValue : `Filter by ${filter.label}`}
             />
         ) : filter.type === "number" ? (
             <Input
                 value={numValue}
-                onBlur={()=>commitValue}
+                onBlur={()=>commitValue()}
                 onChange={(event) => setNumValue(Number.parseInt(event.target.value))}
                 placeholder={numValue?.toString() ? numValue?.toString() : `Filter by ${filter.label}`}
                 type="number"
@@ -93,7 +73,7 @@ const TableFilterInput = (
                     className="w-24 "
                     value={numValue}
                     onChange={(event) => setNumValue(Number.parseInt(event.target.value))}
-                    onBlur={()=>commitValue}
+                    onBlur={()=>commitValue()}
                     type="number"
                     placeholder="Number"
                 />
@@ -102,7 +82,7 @@ const TableFilterInput = (
                     className="w-24 "
                     value={maxNumValue}
                     onChange={(event) => setMaxNumValue(Number.parseInt(event.target.value))}
-                    onBlur={()=>commitValue}
+                    onBlur={()=>commitValue()}
                     type="number"
                     placeholder="Number"
                 />
@@ -113,7 +93,11 @@ const TableFilterInput = (
                 setDate={
                 (val)=>{
                     setStartDateValue(val)
-                    commitValue()
+                    if(val){
+                        const startDate = endOfDay(new Date(val))
+                        const res = startDate.getTime().toString();
+                        onChange({ ...filter, value: res });
+                    }
                 }} 
             />
         ) : filter.type === "daterange" ? (
@@ -122,22 +106,21 @@ const TableFilterInput = (
                 setDate={(range) => {
                     setStartDateValue(range?.from)
                     setEndDateValue(range?.to)
-                    commitValue()
-                }}
-                setStartDate={(val)=>{
-                    setStartDateValue(val)
-                    commitValue()
-                }}
-                setEndDate={(val)=>{
-                    setEndDateValue(val)
-                    commitValue()
+                    if(range?.from && range.to){
+                        const startDate = new Date(range.from);
+                        const endDate = new Date(range.to);
+                        onChange({ 
+                            ...filter, 
+                            value:[ endOfDay(startDate).getTime().toString(), endOfDay(endDate).getTime().toString()] 
+                        })
+                    }
                 }}
             />
         ) : filter.type === "select" ? (
             <Select 
                 onValueChange={(val)=>{
                     setStringValue(val)
-                    commitValue(val)
+                    onChange({ ...filter, value:val })
                 }} 
                 value={stringValue}
             >
@@ -162,7 +145,8 @@ const TableFilterInput = (
         ) : filter.type === "search" ? (
             <Input
                 value={searchValue} 
-                onBlur={()=>commitValue}
+                className="text-sm"
+                onBlur={()=>commitValue()}
                 onChange={(event) => setSearchValue(event.target.value)}
                 placeholder={searchValue ? searchValue : `Search ${filter.label}`}
             />
@@ -171,7 +155,9 @@ const TableFilterInput = (
                 defaultChecked={boolValue}
                 onCheckedChange={(checked) => {
                     setBoolValue(checked !== "indeterminate" ? checked : false)
-                    commitValue()
+                    onChange({ 
+                        ...filter, value:checked !== "indeterminate" ? checked : false
+                    })
                 }}
             />
         )}
