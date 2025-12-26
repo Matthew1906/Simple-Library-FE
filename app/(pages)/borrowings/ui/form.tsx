@@ -43,7 +43,7 @@ const BorrowingForm = (
     const isBookDue = useMemo(()=>{
         if(dueDate){
             const due = new Date(dueDate);
-            return due > new Date();
+            return due < new Date();
         } 
         return false;
     }, [ dueDate ])
